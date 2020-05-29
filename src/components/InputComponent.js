@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Column, Row } from 'simple-flexbox';
 import { StyleSheet, css } from 'aphrodite';
 
@@ -58,8 +58,38 @@ const styles = StyleSheet.create({
     }
 });
 
-function InputComponent({ Icon, iconText }) {
-    const showErrorMessage = Math.random() >= 0.5;
+function InputComponent({ Icon, iconText, onChange, value }) {
+    const [showErrorMessage, setShowErrorMessage] = useState();
+    const [currentValue, setCurrentValue] = useState(value);
+
+    useEffect(() => {
+        setShowErrorMessage(false);
+        setCurrentValue(value);
+    }, [value]);
+
+    const onBlur = e => {
+        let newValue = e.target.value;
+        if (!newValue) {
+            if (showErrorMessage) {
+                setShowErrorMessage(false);
+            }
+            return;
+        }
+        if (newValue === value) {
+            return; // prevent onChange if it's not a new value
+        }
+
+        const validationRegex = /^[0-9]+([.|,][0-9]+)?$/;
+        if (!validationRegex.test(newValue)) {
+            return setShowErrorMessage(true);
+        }
+        if (showErrorMessage) {
+            setShowErrorMessage(false);
+        }
+        newValue = newValue.replace(',', '.');
+        onChange(newValue);
+    };
+
     return (
         <Column className={css(styles.container)}>
             <Row
@@ -80,6 +110,9 @@ function InputComponent({ Icon, iconText }) {
                     className={css(styles.input)}
                     placeholder="Enter amount"
                     type="text"
+                    onBlur={onBlur}
+                    onChange={e => setCurrentValue(e.target.value)}
+                    value={currentValue}
                 />
                 {showErrorMessage && (
                     <div style={{ position: 'relative' }}>
