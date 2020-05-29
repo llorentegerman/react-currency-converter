@@ -35,8 +35,11 @@ const styles = StyleSheet.create({
     },
     input: {
         border: 'none',
+        margin: 0,
         borderTopRightRadius: 2,
         borderBottomRightRadius: 2,
+        borderTopLeftRadius: 0,
+        borderBottomLeftRadius: 0,
         color: '#555',
         flex: 1,
         fontFamily: `sans-serif`,
